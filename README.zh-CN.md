@@ -108,9 +108,42 @@ pnpm dev
 - `LAVALINK_NODES`：Lavalink 节点 JSON 数组。
 - `API_TOKEN`：REST API Bearer Token。
 - `METRICS_TOKEN`：Prometheus `/metrics` Bearer Token。
-- `SPOTIFY_CLIENT_ID`、`SPOTIFY_CLIENT_SECRET`、`APPLE_MUSIC_MEDIA_API_TOKEN`、`DEEZER_MASTER_DECRYPTION_KEY`：平台扩展所需凭据，默认可留空。
+- `SPOTIFY_ENABLED`：是否启用 Lavalink LavaSrc Spotify 来源。
+- `SPOTIFY_CLIENT_ID`、`SPOTIFY_CLIENT_SECRET`：Spotify Developer App 凭据。
+- `SPOTIFY_COUNTRY_CODE`：Spotify 地区代码，默认 `US`。
+- `APPLE_MUSIC_MEDIA_API_TOKEN`、`DEEZER_MASTER_DECRYPTION_KEY`：平台扩展所需凭据，默认可留空。
 
 不要把真实 `.env` 推送到 GitHub。仓库只应该提交 `.env.example`。
+
+## Spotify 使用
+
+Spotify 由 Lavalink 的 LavaSrc 插件解析；Spotify 本身不会直接提供可播放音频，LavaSrc 会用 Spotify 元数据去匹配可播放来源。
+
+1. 到 [Spotify Developer Dashboard](https://developer.spotify.com/dashboard) 创建 App。
+2. 复制 `Client ID` 与 `Client Secret`。
+3. 在服务器 `/opt/ms-bot/.env` 中填写：
+
+```env
+SPOTIFY_ENABLED=true
+SPOTIFY_COUNTRY_CODE=US
+SPOTIFY_CLIENT_ID=你的_Spotify_Client_ID
+SPOTIFY_CLIENT_SECRET=你的_Spotify_Client_Secret
+```
+
+4. 重启 Lavalink 与 Bot：
+
+```bash
+docker compose up --build -d
+docker compose logs -f lavalink
+```
+
+5. 在 Discord 使用：
+
+```text
+/music play https://open.spotify.com/track/歌曲ID
+/music play https://open.spotify.com/playlist/播放清單ID
+/music play spsearch:歌曲名稱 歌手
+```
 
 ## Discord 指令
 

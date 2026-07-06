@@ -61,6 +61,10 @@ export class TrackResolver {
       return trimmed;
     }
 
+    if (trimmed.startsWith("spsearch:") || trimmed.startsWith("sprec:")) {
+      return trimmed;
+    }
+
     if (trimmed.startsWith("applemusic:") || trimmed.startsWith("amsearch:")) {
       return trimmed;
     }

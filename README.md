@@ -91,7 +91,35 @@ Edit `.env`:
 - `REDIS_URL`: Redis connection string.
 - `LAVALINK_NODES`: JSON array of Lavalink nodes.
 - `API_TOKEN`, `METRICS_TOKEN`: Bearer tokens for REST and metrics.
-- Spotify/Apple Music/Deezer fields enable LavaSrc provider support.
+- `SPOTIFY_ENABLED`, `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`: Spotify LavaSrc support.
+- Spotify/Apple Music/Deezer fields enable provider support.
+
+## Spotify
+
+Spotify is resolved through the Lavalink LavaSrc plugin. Spotify does not provide direct playable audio here; LavaSrc mirrors Spotify metadata to a playable provider.
+
+Set these values in `.env`:
+
+```env
+SPOTIFY_ENABLED=true
+SPOTIFY_COUNTRY_CODE=US
+SPOTIFY_CLIENT_ID=your_spotify_client_id
+SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+```
+
+Then restart:
+
+```bash
+docker compose up --build -d
+```
+
+Use Spotify links or LavaSrc queries:
+
+```text
+/music play https://open.spotify.com/track/track_id
+/music play https://open.spotify.com/playlist/playlist_id
+/music play spsearch:song name artist
+```
 
 ## Commands
 

@@ -27,6 +27,22 @@ describe("TrackResolver", () => {
     );
   });
 
+  it("keeps Spotify identifiers for LavaSrc", () => {
+    const resolver = new TrackResolver(fakeGateway(), new MemoryCache(), fakeLogger, {
+      searchTtlSeconds: 60
+    });
+
+    expect(resolver.toLavalinkIdentifier("spotify:track:0eG08cBeKk0mzykKjw4hcQ")).toBe(
+      "spotify:track:0eG08cBeKk0mzykKjw4hcQ"
+    );
+    expect(resolver.toLavalinkIdentifier("spsearch:Aimer Kataomoi")).toBe(
+      "spsearch:Aimer Kataomoi"
+    );
+    expect(resolver.toLavalinkIdentifier("sprec:mix:track:4PTG3Z6ehGkBFwjybzWkR8")).toBe(
+      "sprec:mix:track:4PTG3Z6ehGkBFwjybzWkR8"
+    );
+  });
+
   it("caches resolve results", async () => {
     const gateway = fakeGateway();
     const cache = new MemoryCache();

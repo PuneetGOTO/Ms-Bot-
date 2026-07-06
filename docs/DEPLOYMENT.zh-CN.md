@@ -159,6 +159,11 @@ DISCORD_GUILD_ID=
 
 API_TOKEN=替换成至少16位随机字符串
 METRICS_TOKEN=替换成至少16位随机字符串
+
+SPOTIFY_ENABLED=false
+SPOTIFY_COUNTRY_CODE=US
+SPOTIFY_CLIENT_ID=
+SPOTIFY_CLIENT_SECRET=
 ```
 
 生成随机 token：
@@ -176,6 +181,17 @@ LAVALINK_NODES=[{"name":"primary","url":"lavalink:2333","auth":"youshallnotpass"
 ```
 
 生产环境建议进一步修改 `docker-compose.yml` 中的 PostgreSQL 密码与 Lavalink auth，然后同步修改 `.env` / compose environment。
+
+如果要启用 Spotify，请到 [Spotify Developer Dashboard](https://developer.spotify.com/dashboard) 创建 App，复制 `Client ID` 与 `Client Secret`，然后设置：
+
+```env
+SPOTIFY_ENABLED=true
+SPOTIFY_COUNTRY_CODE=US
+SPOTIFY_CLIENT_ID=你的_Spotify_Client_ID
+SPOTIFY_CLIENT_SECRET=你的_Spotify_Client_Secret
+```
+
+Spotify 通过 Lavalink 的 LavaSrc 插件解析。Spotify 本身不会直接提供可播放音频，LavaSrc 会使用 Spotify 元数据去匹配可播放来源。
 
 ### 5. 防火墙建议
 
