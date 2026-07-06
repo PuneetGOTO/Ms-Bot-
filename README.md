@@ -2,6 +2,11 @@
 
 Production-ready Discord music bot built with Node.js 22 LTS, TypeScript strict mode, Discord.js, Shoukaku, Lavalink, Prisma, PostgreSQL, Redis, Fastify, Prometheus, Pino, Zod, Vitest, Docker, and GitHub Actions.
 
+## Documentation
+
+- [中文 README](README.zh-CN.md)
+- [中文安装部署教程：Ubuntu / Windows](docs/DEPLOYMENT.zh-CN.md)
+
 ## Features
 
 - Lavalink-first playback with Shoukaku session resume, reconnect, load balancing, and node failover.
