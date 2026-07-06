@@ -47,6 +47,50 @@ Use Voice Activity
 - 20 GB 磁盘起步
 - 能访问 Discord、GitHub、Docker Registry
 
+### 0. 一键部署脚本
+
+如果是全新的 Ubuntu 服务器，推荐先用脚本完成基础部署：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/PuneetGOTO/Ms-Bot-/main/scripts/deploy-ubuntu.sh -o deploy-ubuntu.sh
+bash deploy-ubuntu.sh --register-commands
+```
+
+脚本会自动完成：
+
+- 检查 Ubuntu 系统。
+- 安装基础工具、Docker Engine 与 Docker Compose 插件。
+- 克隆或更新 `https://github.com/PuneetGOTO/Ms-Bot-.git` 到 `/opt/ms-bot`。
+- 从 `.env.example` 创建 `/opt/ms-bot/.env`。
+- 设置 `NODE_ENV=production`。
+- 自动生成 `API_TOKEN` 与 `METRICS_TOKEN`。
+- 提示输入 `DISCORD_TOKEN`、`DISCORD_CLIENT_ID`，以及可选的 `DISCORD_GUILD_ID`。
+- 执行 `docker compose up --build -d`。
+- 等待 `http://localhost:3000/health` 通过。
+- 使用 `--register-commands` 时，在 bot 容器内注册 Slash Commands。
+
+常用参数：
+
+```bash
+bash deploy-ubuntu.sh --app-dir /opt/ms-bot
+bash deploy-ubuntu.sh --repo-url https://github.com/PuneetGOTO/Ms-Bot-.git --branch main
+bash deploy-ubuntu.sh --skip-docker
+bash deploy-ubuntu.sh --no-start
+bash deploy-ubuntu.sh --non-interactive
+```
+
+脚本部署完成后，常用命令：
+
+```bash
+cd /opt/ms-bot
+docker compose ps
+docker compose logs -f bot
+curl http://localhost:3000/health
+curl http://localhost:3000/ready
+```
+
+脚本不会把 `.env` 推送到 GitHub。请把 `/opt/ms-bot/.env` 当作服务器私密文件保存。
+
 ### 1. 更新系统
 
 ```bash

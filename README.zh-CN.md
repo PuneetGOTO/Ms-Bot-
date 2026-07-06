@@ -66,6 +66,17 @@ sequenceDiagram
 
 生产环境推荐使用 Docker Compose 部署 PostgreSQL、Redis、Lavalink 与 Bot。完整步骤请看 [安装部署教程](docs/DEPLOYMENT.zh-CN.md)。
 
+## Ubuntu 一键部署
+
+在全新的 Ubuntu 22.04 / 24.04 服务器上，可以直接使用部署脚本安装 Docker、拉取项目、创建 `.env`、生成 API token、启动 Docker Compose，并可选择注册 Slash Commands：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/PuneetGOTO/Ms-Bot-/main/scripts/deploy-ubuntu.sh -o deploy-ubuntu.sh
+bash deploy-ubuntu.sh --register-commands
+```
+
+脚本会提示输入 `DISCORD_TOKEN`、`DISCORD_CLIENT_ID`，并可选输入 `DISCORD_GUILD_ID`。更多参数与手动部署流程请看 [Ubuntu / Windows 安装部署教程](docs/DEPLOYMENT.zh-CN.md)。
+
 ## 快速启动
 
 ```bash

@@ -141,6 +141,13 @@ pnpm build
 
 ## Deployment
 
+Ubuntu servers can use the bundled deployment script:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/PuneetGOTO/Ms-Bot-/main/scripts/deploy-ubuntu.sh -o deploy-ubuntu.sh
+bash deploy-ubuntu.sh --register-commands
+```
+
 The Docker image runs migrations before starting:
 
 ```bash
