@@ -176,6 +176,10 @@ export const musicComponents: ComponentHandler = {
       await interaction.editReply({ embeds: [queueEmbed(await context.music.pause(guildId))] });
       return;
     }
+    if (customId === "music:resume") {
+      await interaction.editReply({ embeds: [queueEmbed(await context.music.resume(guildId))] });
+      return;
+    }
     if (customId === "music:skip") {
       await interaction.editReply({ embeds: [queueEmbed(await context.music.skip(guildId))] });
       return;

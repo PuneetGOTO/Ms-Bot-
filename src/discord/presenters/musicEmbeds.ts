@@ -79,6 +79,7 @@ export function trackEmbed(track: QueueTrack): EmbedBuilder {
 export function playerControls(): ActionRowBuilder<ButtonBuilder> {
   return new ActionRowBuilder<ButtonBuilder>().addComponents(
     new ButtonBuilder().setCustomId("music:pause").setStyle(ButtonStyle.Secondary).setLabel("暫停"),
+    new ButtonBuilder().setCustomId("music:resume").setStyle(ButtonStyle.Success).setLabel("繼續"),
     new ButtonBuilder().setCustomId("music:skip").setStyle(ButtonStyle.Primary).setLabel("跳過"),
     new ButtonBuilder().setCustomId("music:stop").setStyle(ButtonStyle.Danger).setLabel("停止"),
     new ButtonBuilder().setCustomId("music:favorite").setStyle(ButtonStyle.Success).setLabel("收藏")

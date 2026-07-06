@@ -1,10 +1,12 @@
 import { adminCommand } from "./adminCommand";
 import { effectsCommand, effectsComponents } from "./effectsCommand";
 import { musicCommand, musicComponents } from "./musicCommand";
+import { pingCommand } from "./pingCommand";
 import { playlistCommand, playlistComponents } from "./playlistCommand";
 import type { ComponentHandler, DiscordCommand } from "./Command";
 
 export const commands: readonly DiscordCommand[] = [
+  pingCommand,
   musicCommand,
   effectsCommand,
   playlistCommand,

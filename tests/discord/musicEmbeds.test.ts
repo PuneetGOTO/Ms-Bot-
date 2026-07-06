@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { queueEmbed, trackEmbed } from "../../src/discord/presenters/musicEmbeds";
+import { playerControls, queueEmbed, trackEmbed } from "../../src/discord/presenters/musicEmbeds";
 import type { QueueSummary, QueueTrack } from "../../src/domain/music/types";
 
 describe("music embeds", () => {
@@ -29,6 +29,18 @@ describe("music embeds", () => {
 
     expect(json.title?.length ?? 0).toBeLessThanOrEqual(256);
     expect(json.description?.length ?? 0).toBeLessThanOrEqual(4096);
+  });
+
+  it("renders the full playback control button row", () => {
+    const json = playerControls().toJSON();
+
+    expect(json.components).toEqual([
+      expect.objectContaining({ custom_id: "music:pause", label: "暫停" }),
+      expect.objectContaining({ custom_id: "music:resume", label: "繼續" }),
+      expect.objectContaining({ custom_id: "music:skip", label: "跳過" }),
+      expect.objectContaining({ custom_id: "music:stop", label: "停止" }),
+      expect.objectContaining({ custom_id: "music:favorite", label: "收藏" })
+    ]);
   });
 });
 

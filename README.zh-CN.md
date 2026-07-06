@@ -114,6 +114,7 @@ pnpm dev
 
 ## Discord 指令
 
+- `/ping`
 - `/music play query`
 - `/music pause`、`/music resume`、`/music stop`、`/music skip`、`/music previous`
 - `/music remove position`、`/music move from to`、`/music clear`、`/music shuffle`

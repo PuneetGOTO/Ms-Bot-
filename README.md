@@ -95,6 +95,7 @@ Edit `.env`:
 
 ## Commands
 
+- `/ping`
 - `/music play query`
 - `/music pause`, `/music resume`, `/music stop`, `/music skip`, `/music previous`
 - `/music remove position`, `/music move from to`, `/music clear`, `/music shuffle`
