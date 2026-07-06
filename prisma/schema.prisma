@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PremiumTier {
+  FREE
+  PLUS
+  PRO
+  ENTERPRISE
+}
+
+enum LoopMode {
+  OFF
+  TRACK
+  QUEUE
+}
+
+enum SourceType {
+  YOUTUBE
+  SPOTIFY
+  APPLE_MUSIC
+  SOUNDCLOUD
+  DEEZER
+  HTTP
+  LOCAL
+  RADIO
+  UNKNOWN
+}
+
+enum PlaybackEventType {
+  PLAY
+  PAUSE
+  RESUME
+  STOP
+  SKIP
+  SEEK
+  FINISH
+  ERROR
+}
+
+model Guild {
+  id          String         @id
+  name        String?
+  shardId     Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  settings    GuildSettings?
+  playlists   Playlist[]
+  histories   History[]
+  snapshots   QueueSnapshot[]
+  analytics   Analytics[]
+
+  @@index([shardId])
+}
+
+model GuildSettings {
+  guildId              String   @id
+  locale               String   @default("zh-TW")
+  djModeEnabled        Boolean  @default(false)
+  djRoleIds            String[] @default([])
+  allowedRoleIds       String[] @default([])
+  blockedRoleIds       String[] @default([])
+  allowedTextChannelIds String[] @default([])
+  allowedVoiceChannelIds String[] @default([])
+  defaultVolume        Int      @default(80)
+  maxQueueSize         Int      @default(1000)
+  announceNowPlaying   Boolean  @default(true)
+  autoplayEnabled      Boolean  @default(false)
+  premiumOnlyEffects   Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  guild                Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id          String     @id
+  username    String?
+  locale      String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  favorites   Favorite[]
+  playlists   Playlist[]
+  histories   History[]
+  premium     Premium?
+}
+
+model Favorite {
+  id          String     @id @default(cuid())
+  userId      String
+  source      SourceType
+  identifier  String
+  title       String
+  uri         String?
+  author      String?
+  durationMs  Int?
+  artworkUrl  String?
+  createdAt   DateTime   @default(now())
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, identifier])
+  @@index([userId, createdAt])
+}
+
+model Playlist {
+  id          String          @id @default(cuid())
+  guildId     String?
+  ownerId     String
+  name        String
+  description String?
+  isPublic    Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  guild       Guild?          @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  owner       User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  tracks      PlaylistTrack[]
+
+  @@unique([ownerId, name])
+  @@index([guildId])
+}
+
+model PlaylistTrack {
+  id          String     @id @default(cuid())
+  playlistId  String
+  position    Int
+  source      SourceType
+  identifier  String
+  encoded     String?
+  title       String
+  uri         String?
+  author      String?
+  durationMs  Int?
+  artworkUrl  String?
+  addedById   String
+  createdAt   DateTime   @default(now())
+  playlist    Playlist   @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, position])
+  @@index([playlistId])
+}
+
+model History {
+  id          String            @id @default(cuid())
+  guildId     String
+  userId      String
+  source      SourceType
+  identifier  String
+  title       String
+  uri         String?
+  author      String?
+  durationMs  Int?
+  eventType   PlaybackEventType @default(PLAY)
+  positionMs  Int?
+  createdAt   DateTime          @default(now())
+  guild       Guild             @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([guildId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model Premium {
+  id          String      @id @default(cuid())
+  userId      String      @unique
+  tier        PremiumTier @default(FREE)
+  expiresAt   DateTime?
+  metadata    Json        @default("{}")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model QueueSnapshot {
+  guildId      String   @id
+  voiceChannelId String?
+  textChannelId  String?
+  payload      Json
+  updatedAt    DateTime @updatedAt
+  guild        Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@index([updatedAt])
+}
+
+model Analytics {
+  id          String            @id @default(cuid())
+  guildId     String
+  eventType   PlaybackEventType
+  source      SourceType?
+  durationMs  Int?
+  latencyMs   Int?
+  nodeName    String?
+  createdAt   DateTime          @default(now())
+  guild       Guild             @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@index([guildId, createdAt])
+  @@index([eventType, createdAt])
+}
+
+model NodeStatus {
+  name             String   @id
+  connected        Boolean  @default(false)
+  sessionId        String?
+  players          Int      @default(0)
+  playingPlayers   Int      @default(0)
+  cpuLoad          Float?
+  memoryUsedBytes  BigInt?
+  frameDeficit     Int?
+  frameNulled      Int?
+  pingMs           Int?
+  lastError        String?
+  updatedAt        DateTime @updatedAt
+
+  @@index([connected])
+}

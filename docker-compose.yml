@@ -1,0 +1,73 @@
+services:
+  bot:
+    build:
+      context: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      lavalink:
+        condition: service_started
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql://musicbot:musicbot@postgres:5432/musicbot?schema=public
+      REDIS_URL: redis://redis:6379/0
+      LAVALINK_NODES: '[{"name":"primary","url":"lavalink:2333","auth":"youshallnotpass","secure":false}]'
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1536M
+
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: musicbot
+      POSTGRES_USER: musicbot
+      POSTGRES_PASSWORD: musicbot
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U musicbot -d musicbot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  lavalink:
+    image: ghcr.io/lavalink-devs/lavalink:4.2.2
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./lavalink/application.yml:/opt/Lavalink/application.yml:ro
+    ports:
+      - "2333:2333"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1536M
+
+volumes:
+  postgres_data:
+  redis_data:

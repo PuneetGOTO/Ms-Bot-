@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    name: Build, lint, and test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: musicbot
+          POSTGRES_USER: musicbot
+          POSTGRES_PASSWORD: musicbot
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U musicbot -d musicbot"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://musicbot:musicbot@localhost:5432/musicbot?schema=public
+      REDIS_URL: redis://localhost:6379/0
+      DISCORD_TOKEN: ci-token
+      DISCORD_CLIENT_ID: "000000000000000000"
+      API_TOKEN: ci-api-token-with-high-entropy-placeholder
+      METRICS_TOKEN: ci-metrics-token-with-high-entropy-placeholder
+      LAVALINK_NODES: '[{"name":"ci","url":"localhost:2333","auth":"youshallnotpass","secure":false}]'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Enable pnpm
+        run: corepack enable
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm db:generate
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Lint
+        run: pnpm lint
+      - name: Test
+        run: pnpm coverage
+      - name: Build
+        run: pnpm build
+
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Build image
+        run: docker build .

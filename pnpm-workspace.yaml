@@ -1,0 +1,6 @@
+allowBuilds:
+  "@prisma/engines": true
+  esbuild: true
+  prisma: true
+minimumReleaseAgeExclude:
+  - fastify@5.10.0
