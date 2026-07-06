@@ -228,7 +228,7 @@ is_missing_or_placeholder() {
 prompt_secret() {
   local label="$1"
   local value=""
-  read -r -s -p "${label}: " value
+  read -r -s -p "${label}: " value || true
   printf '\n' >&2
   printf '%s' "${value}"
 }
@@ -236,7 +236,7 @@ prompt_secret() {
 prompt_plain() {
   local label="$1"
   local value=""
-  read -r -p "${label}: " value
+  read -r -p "${label}: " value || true
   printf '%s' "${value}"
 }
 
@@ -284,19 +284,25 @@ configure_env() {
   if [[ -t 0 ]] && is_missing_or_placeholder "${discord_token}"; then
     local token
     token="$(prompt_secret "Discord Bot Token")"
-    [[ -n "${token}" ]] && set_env_value DISCORD_TOKEN "${token}"
+    if [[ -n "${token}" ]]; then
+      set_env_value DISCORD_TOKEN "${token}"
+    fi
   fi
 
   if [[ -t 0 ]] && is_missing_or_placeholder "${discord_client_id}"; then
     local client_id
     client_id="$(prompt_plain "Discord Client ID")"
-    [[ -n "${client_id}" ]] && set_env_value DISCORD_CLIENT_ID "${client_id}"
+    if [[ -n "${client_id}" ]]; then
+      set_env_value DISCORD_CLIENT_ID "${client_id}"
+    fi
   fi
 
   if [[ -t 0 && -z "$(get_env_value DISCORD_GUILD_ID)" ]]; then
     local guild_id
     guild_id="$(prompt_plain "Discord Guild ID for fast command registration (optional, press Enter to skip)")"
-    [[ -n "${guild_id}" ]] && set_env_value DISCORD_GUILD_ID "${guild_id}"
+    if [[ -n "${guild_id}" ]]; then
+      set_env_value DISCORD_GUILD_ID "${guild_id}"
+    fi
   fi
 }
 
